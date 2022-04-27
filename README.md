@@ -1,70 +1,123 @@
-# Getting Started with Create React App
+# 推箱子
+现在你将作为玩家参与游戏，按规则将箱子 'B' 移动到目标位置 'T' ：
+
+玩家用字符 'S' 表示，只要他在地板上，就可以在网格中向上、下、左、右四个方向移动。
+地板用字符 '.' 表示，意味着可以自由行走。
+墙用字符 '#' 表示，意味着障碍物，不能通行。 
+箱子仅有一个，用字符 'B' 表示。相应地，网格上有一个目标位置 'T'。
+玩家需要站在箱子旁边，然后沿着箱子的方向进行移动，此时箱子会被移动到相邻的地板单元格。记作一次「推动」。
+玩家无法越过箱子。
+
+<img width="783" alt="image" src="https://user-images.githubusercontent.com/21293571/165422974-bd4c90c4-1470-4e19-bf10-32191e1eba69.png">
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+### 代码段
+```javascript
+1. 工程初始化
+	npx create-react-app my-app
+	cd src
+	# 如果你使用 Mac 或 Linux:
+	rm -f  *
+	# 创建组件:
+	rcc
+	# 挂载:
+	ReactDOM
+	  .createRoot(document.getElementById('root'))
+	  .render(<Game />,
+	    document.getElementById('root')
+	  );
 
-In the project directory, you can run:
+2. 一维数组转二维数组
+	let board = this.state.squares.reduce((rows, key, index) => (index % 6 == 0 ? rows.push([key]) 
+	     : rows[rows.length-1].push(key)) && rows, []);
+	
+3. 渲染二维数组
+	render() {
+	    return (
+	      <div>
+	        <table>
+	          {
+	            this.state.squares.map((row, i) => {
+	            return (
+	              <tr>
+	                {
+	                  row.map((cell, j) => this.renderSquare(cell,i,j))}
+	              </tr>
+	                  );
+	            }
+	            )
+	          }
+	        </table>
+	      </div>
+	    );
+	  }
+	
+4. 深拷贝 二维数组 
+    let re=[];
+    for(let i=0;i<arr.length;i++){
+      let[...arr1]=arr;
+      re.push(arr1);
+    }
+
+5. 函数组件
+	function Square(props) {
+	  return (
+	    <button
+	      className="square"
+	      rowIndex={props.rowIndex}// 需要传rowIndex, colIndex参数表示点击的不同位置
+	      colIndex={props.colIndex}
+	      onClick={props.onClick} // state改变放在父组件中
+	    >
+	      {props.value}
+	    </button>
+	  );
+	}
+6. 函数组件中的state
+	const [count, setCount] = useState([0,0]);
+  
+7. onClick函数中this作用域问题：箭头函数解决
+	const Row = ({ row, onClick }) => {
+	  return (
+	    <tr>
+	      {
+	        row.map((cell, i) => (
+	          <Square
+	            key={i}
+	            value={cell}
+	            onClick={onClick}
+	          />))
+	      }
+	    </tr>
+	  );
+	};
+	
+8. 父组件中全局变量初始挂载
+	componentWillMount(){
+	    this.initBoard();
+	    // const body = document.querySelector('root');
+	    // body.addEventListener('keydown', this.handleKeyDown.bind(this));
+	  }
+    
+	向子组件传参
+	renderSquare(cell,i,j) {
+	    return (
+	      <Square
+	        value={cell}
+	        onClick={() => this.handleClick(i,j)}
+	      />
+	    );
+	  }
+  
+ 9. 动画
+	https://www.runoob.com/jsref/met-win-setinterval.html
+```
+
+### 参考
+```
+1. 2048 https://codepen.io/jeffleu/pen/JRzyPe?editors=0010
+2. tic-tac-toe https://zh-hans.reactjs.org/tutorial/tutorial.html#lifting-state-up-again
+3. leetcode 1263, 797
+```
 
 ### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
